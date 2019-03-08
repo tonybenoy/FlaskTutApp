@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi!</h1>
+      {% for post in posts %}
+<p>
+    The {{post.category}} laptops for you are
+    </br>
+    <a href={{ post.url }}>{{ post.name }}</a>
+    </br>
+    <img src={{ post.imgurl}}>
+    Priced at {{post.Price}}
+</p>
+        {% endfor %}
+{% endblock %}

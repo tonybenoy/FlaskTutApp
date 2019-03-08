@@ -1,0 +1,14 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Config Computer</title>
+      {% else %}
+      <title>Wecome to computer config</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>App: <a href="/index">Novice</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
