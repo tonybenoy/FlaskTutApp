@@ -4,6 +4,7 @@ myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["mydatabase"]
 mycol = mydb["novicedataset"]
 
+#make sure the names matches everywhere and it is case sensitive
 mydict = { "name": "Dell XPS 13", "Price": 3000,
         "url":"https://amzon.in/kjdksd","category":"gaming","imgurl":"image url" }
 x = mycol.insert_one(mydict)

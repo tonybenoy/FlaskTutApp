@@ -1,14 +1,22 @@
+<!--Base Template for all other templates-->
 <html>
     <head>
-      {% if title %}
+      {% if title %} <!--If statement to check if title was passed if it is not the else-->
+      <!--No need to go through Jinja templating just understand how to use all used in the code-->
       <title>{{ title }} - Config Computer</title>
       {% else %}
       <title>Wecome to computer config</title>
-      {% endif %}
+      {% endif %} <!--Always end if-->
     </head>
     <body>
         <div>App: <a href="/index">Novice</a></div>
         <hr>
-        {% block content %}{% endblock %}
+
+        {% block content %}
+        <!--
+          all content from other templates which inherit from this
+          will come here
+        -->
+        {% endblock %}
     </body>
 </html>

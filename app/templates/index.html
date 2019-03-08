@@ -1,17 +1,22 @@
+<!--Extending base class-->
 {% extends "base.html" %}
-
+<!--All contebt from below will be inside bast.html-->
 {% block content %}
     <h1>Hi!</h1>
-        <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
+    <!--Method will be post for form -->
+        <form action="" method="post" novalidate> 
+        {{ form.hidden_tag() }} 
         <p>
+        <!--Label is the dtring defined in form.py-->
             {{ form.category.label }}<br>
+            <!--Input object-->
             {{ form.category() }}
         </p>
         <p>
             {{ form.price.label }}<br>
             {{ form.price(size=32) }}
         </p>
+        <!--Submit button-->
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}

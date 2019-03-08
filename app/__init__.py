@@ -1,5 +1,5 @@
 from flask import Flask
-from config import Config
-app = Flask(__name__)
-app.config.from_object(Config)
-from app import routes
+from config import Config #Import configuration from config.py. Optional but good practice
+app = Flask(__name__) #creating the app object
+app.config.from_object(Config) #Applying config to app
+from app import routes #Importing all routes from routes.py
