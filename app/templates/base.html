@@ -18,7 +18,7 @@
     {% if current_user.is_anonymous %}
     <a href="{{ url_for('index') }}">Home</a>
     {% else %}
-    <a href="{{ url_for('index') }}">Novice</a>
+    <a href="{{ url_for('index') }}">Get Device</a>
     {% endif %}
     {% if current_user.is_anonymous %}
     <a href="{{ url_for('login') }}">Login</a>
