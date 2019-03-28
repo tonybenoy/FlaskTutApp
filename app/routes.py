@@ -1,6 +1,6 @@
 from app import app,login
 from flask import render_template, flash, redirect,url_for,request
-from app.forms import NoviceForm ,RegisterationForm,ProForm ,LoginForm ,EditProfileForm#import all the form classes from form.py
+from app.forms import NoviceForm ,RegisterationForm,ProForm ,LoginForm ,EditProfileForm, IndexForm #import all the form classes from form.py
 import pymongo
 from flask_login import login_user,current_user,UserMixin,logout_user,login_required # Login and session management 
 from werkzeug.security import generate_password_hash,check_password_hash #To generate and check password hashes in database
@@ -28,22 +28,28 @@ after the @api.route
 """
 @app.route('/',methods=['GET','POST']) 
 @app.route('/index', methods=['GET', 'POST'])
-@login_required #Every url that you want to lock behind a Login use this decorator
 def index():
-    myclient = pymongo.MongoClient("mongodb://localhost:27017")
-    mydb = myclient["mydatabase"]
-    mycol = mydb["users"]
-    myquery = {"_id": ObjectId(current_user.id)}
-    mydoc = mycol.find_one(myquery)
-    usertype = mydoc["usertype"] #Current user's usertype can be used to create the type of form needed
-    myclient.close()
+    form = IndexForm()
+    if form.validate_on_submit(): #when form is submitted then this block of code will be run i.e. on POST
+         return redirect(url_for('search',usertype=form.usertype.data))
+    return render_template('index1.html',title="Home", form=form) #Pass the form object on top if it is a GET request
+    
+ 
+@app.route('/search/<usertype>', methods=['GET', 'POST'])
+def search(usertype):
+    #myclient = pymongo.MongoClient("mongodb://localhost:27017")
+    #mydb = myclient["mydatabase"]
+    #mycol = mydb["users"]
+    #myquery = {"_id": ObjectId(current_user.id)}
+    #mydoc = mycol.find_one(myquery)
+    #usertype = mydoc["usertype"] #Current user's usertype can be used to create the type of form needed
+    #myclient.close()
     if usertype== "n":
         form = NoviceForm() #create and object of the form class
     elif usertype == "p":
         form = ProForm()
     if form.validate_on_submit(): #when form is submitted then this block of code will be run i.e. on POST
         #Create a connection everytime and do not use global connections.
-        print("Submitted?")
         if usertype== "n":
             myclient = pymongo.MongoClient("mongodb://localhost:27017")
             mydb = myclient["mydatabase"]
@@ -57,26 +63,29 @@ def index():
             for x in mydoc:
                 post.append(x) #Appending all to a list as mydoc is a mongodb object
             myclient.close() # Always close connections 
-            """Posts contain the list of dictionary/json information to be displayed
-            This render template will be called after the form submission
-            """
+            #Posts contain the list of dictionary/json information to be displayed
+            #This render template will be called after the form submission
             return render_template('novice.html',title="Product List", posts=post) 
         elif usertype == "p":
             myclient = pymongo.MongoClient("mongodb://localhost:27017")
             mydb = myclient["mydatabase"]
-            mycol = mydb["prodataset"]
-            myquery = {"cpu":form.cpu.data,"ram":form.RamStorage.data} #$lt for less than 
+            mycol = mydb["cpu"]
+            myquery = {"cpu":form.cpu.data} #$lt for less than 
             mydoc = mycol.find(myquery)
-            post=[] #List that will be passed to the template to display
+            cpu=[] #List that will be passed to the template to display
             for x in mydoc:
-                post.append(x) #Appending all to a list as mydoc is a mongodb object
+                cpu.append(x) #Appending all to a list as mydoc is a mongodb object
+            mycol = mydb["ram"]
+            myquery = {"ram":form.RamStorage.data} #$lt for less than 
+            mydoc = mycol.find(myquery)
+            cpu=[] #List that will be passed to the template to display
+            for x in mydoc:
+                cpu.append(x) #Appending all to a list as mydoc is a mongodb object
             myclient.close() # Always close connections 
-            """Posts contain the list of dictionary/json information to be displayed
-            This render template will be called after the form submission
-            """
-            return render_template('pro.html',title="Product List", posts=post)
-    return render_template('index.html',title="Home",usertype=usertype, form=form) #Pass the form object on top if it is a GET request
-
+            #Posts contain the list of dictionary/json information to be displayed
+            #This render template will be called after the form submission
+            return render_template('pro.html',title="Product List",ram=ram ,cpu=post)
+    return render_template('index.html',title="Home", form=form) #Pass the form object on top if it is a GET request
 
 @app.route('/register',methods=['GET','POST'])
 def register():
@@ -106,16 +115,15 @@ def register():
             myclient.close()
             return redirect(url_for('register'))
         hashedpass = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12) #Encrypting password. Never store plaintext passwords
-        mydict = { "username":form.username.data, "email": form.email.data,"password":hashedpass,"usertype":form.usertype.data }
+        mydict = { "username":form.username.data, "email": form.email.data,"password":hashedpass}
         x = mycol.insert_one(mydict)  #Adding user to mongo DB
         flash('Congratulations, you are now a registered user!')
         myclient.close()
         return redirect(url_for('login')) # Redirect to login
     return render_template('register.html', title='Register', form=form)
 
-
-
 @app.route('/logout')
+@login_required #Every url that you want to lock behind a Login use this decorator
 def logout():
     logout_user() #Logs out the user session
     return redirect(url_for('index')) 
@@ -124,7 +132,7 @@ def logout():
 def login():
     if current_user.is_authenticated: #same as before
         return redirect(url_for('index'))
-    form= LoginForm()
+    form = LoginForm()
     if form.validate_on_submit():
         myclient = pymongo.MongoClient("mongodb://localhost:27017")
         mydb = myclient["mydatabase"]
@@ -165,8 +173,6 @@ def user(username): #Parameter in url passed in function must have same var name
         user.id = item["_id"] # This is done so that in the template you can enable edit button if the user is seeing his profile
     myclient.close()
     return render_template('user.html', user=user)
-
-
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required

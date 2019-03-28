@@ -4,21 +4,46 @@
 {% block content %}
 <!--All the content from here will be embedded inside base.html  block-->
 <h1>Hi!</h1>
-{% for post in posts %}
+{% for item in ram %}
 <!--Looping through all the items in the post list passed-->
 <p>
-    The laptops for you with {{post.ram}} and {{post.cpu}} are
+    The RAMS for you are
+</p>
+<ol>
     <!--Jinja template to access items in dictionary/JSOn -->
-    </br>
-    <a href={{ post.url }}>{{ post.name }}</a>
-    </br>
-    <!-- Keep the images static path in mongodb. Create a folder called as static
+    <li>
+        <a href={{ item.url }}>{{ item.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
      inside app folder and the iuse the path from there. app/static/images/1.jpg
     or use images from the internet by giving the url-->
-    <img src={{ post.imgurl}}>
-    Priced at {{post.Price}}
-</p>
+        <img src={{ item.imgurl}}>
+        Priced at {{item.Price}}
+    </li>
+</ol>
 {% endfor %}
+
+{% for item in cpu %}
+<!--Looping through all the items in the post list passed-->
+<p>
+    The RAMS for you are
+</p>
+<ol>
+    <!--Jinja template to access items in dictionary/JSOn -->
+    <li>
+        <a href={{ item.url }}>{{ item.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
+     inside app folder and the iuse the path from there. app/static/images/1.jpg
+    or use images from the internet by giving the url-->
+        <img src={{ item.imgurl}}>
+        Priced at {{item.Price}}
+    </li>
+</ol>
+{% endfor %}
+
 <!--Always close for loops like this-->
 {% endblock %}
 <!--End of block content-->

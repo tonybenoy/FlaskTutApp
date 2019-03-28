@@ -1,0 +1,24 @@
+<!--Extending base class-->
+{% extends "base.html" %}
+<!--All contebt from below will be inside bast.html-->
+{% block content %}
+<h1>Hi!</h1>
+<p>
+    Welcome to computer configurator. Please answer the following questions to begin your search for your perfect
+    computer.
+</p>
+<!--Method will be post for form -->
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {% if form.usertype %}
+    <p>
+        <!--Label is the dtring defined in form.py-->
+        {{ form.usertype.label }}<br>
+        <!--Input object-->
+        {{ form.usertype() }}
+    </p>
+    {% endif %}
+    <!--Submit button-->
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

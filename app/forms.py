@@ -26,7 +26,10 @@ class RegisterationForm(FlaskForm): #Feel free to add more fields and expand lik
     password = PasswordField('Password',validators=[DataRequired()])
     passwordrep = PasswordField('Repeat Password',validators=[DataRequired(),EqualTo('password')]) #EqualTo makes sure content matches
     submit = SubmitField("Register")
-    usertype = RadioField('User Type', choices = [('n','Novice'),('b','Basic'),('p','Pro')])
+
+class IndexForm(FlaskForm):
+    usertype = RadioField('What Type of user are you?', choices = [('n','Novice'),('p','Pro')])
+    submit = SubmitField("Submit")
     
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
