@@ -4,46 +4,37 @@
 {% block content %}
 <!--All the content from here will be embedded inside base.html  block-->
 <h1>Hi!</h1>
-{% for item in ram %}
-<!--Looping through all the items in the post list passed-->
+
 <p>
-    The RAMS for you are
+    The options for you are
 </p>
-<ol>
+{% for item in posts %}
+<!--Looping through all the items in the post list passed-->
+<ul>
     <!--Jinja template to access items in dictionary/JSOn -->
     <li>
-        <a href={{ item.url }}>{{ item.name }}</a>
+        <p>CPU</p>
+        <a href={{ item.url }}>{{ item.cpu.name }}</a>
         </br>
-        <p>Manufactured by {{ item.manufacturer }}</p>
+        <p>Manufactured by {{ item.cpu.manufacturer }}</p>
         <!-- Keep the images static path in mongodb. Create a folder called as static
      inside app folder and the iuse the path from there. app/static/images/1.jpg
     or use images from the internet by giving the url-->
-        <img src={{ item.imgurl}}>
-        Priced at {{item.Price}}
-    </li>
-</ol>
-{% endfor %}
-
-{% for item in cpu %}
-<!--Looping through all the items in the post list passed-->
-<p>
-    The RAMS for you are
-</p>
-<ol>
-    <!--Jinja template to access items in dictionary/JSOn -->
-    <li>
-        <a href={{ item.url }}>{{ item.name }}</a>
+        <img src={{ item.cpu.imgurl}}>
+        Priced at {{item.cpu.Price}}
+        <p>RAM</p>
+        <a href={{ item.ram.url }}>{{ item.ram.name }}</a>
         </br>
-        <p>Manufactured by {{ item.manufacturer }}</p>
+        <p>Manufactured by {{ item.ram.manufacturer }}</p>
         <!-- Keep the images static path in mongodb. Create a folder called as static
      inside app folder and the iuse the path from there. app/static/images/1.jpg
     or use images from the internet by giving the url-->
-        <img src={{ item.imgurl}}>
-        Priced at {{item.Price}}
+        <img src={{ item.ram.imgurl}}>
+        Priced at {{item.ram.Price}}
+        <p>Total Price will be {{ item.totalprice }}</p>
+        <a href="{{ url_for('post',ram=item.ram._id,cpu=item.cpu._id) }}">Save to Dashboard</a>
     </li>
-</ol>
-{% endfor %}
-
+</ul> {% endfor %}
 <!--Always close for loops like this-->
 {% endblock %}
 <!--End of block content-->

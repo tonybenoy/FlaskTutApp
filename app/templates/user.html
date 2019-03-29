@@ -7,4 +7,13 @@
 {% endif %}
 <h1>User: {{ user.username }}</h1>
 <hr>
+<p>Saved Items</p>
+<ol>
+    {% for item in posts %}
+    <li>
+        {{item.item}} Priced at {{item.price}}
+    </li>
+
+    {% endfor %}
+</ol>
 {% endblock %}

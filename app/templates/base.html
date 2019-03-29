@@ -20,6 +20,9 @@
     {% else %}
     <a href="{{ url_for('index') }}">Get Device</a>
     {% endif %}
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('user') }}">Dashboard</a>
+    {% endif %}
     {% if current_user.is_anonymous %}
     <a href="{{ url_for('login') }}">Login</a>
     {% else %}

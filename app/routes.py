@@ -6,7 +6,6 @@ from flask_login import login_user,current_user,UserMixin,logout_user,login_requ
 from werkzeug.security import generate_password_hash,check_password_hash #To generate and check password hashes in database
 from werkzeug.urls import url_parse
 from bson.objectid import ObjectId #TO search with id in mongo db we need bson object
-
 class User(UserMixin): #Defined user object  for session management. If using ORM then you should define all the object but not required as we are using Direct connections to mongo
     pass
 
@@ -78,14 +77,46 @@ def search(usertype):
             mycol = mydb["ram"]
             myquery = {"ram":form.RamStorage.data} #$lt for less than 
             mydoc = mycol.find(myquery)
-            cpu=[] #List that will be passed to the template to display
+            ram=[] #List that will be passed to the template to display
             for x in mydoc:
-                cpu.append(x) #Appending all to a list as mydoc is a mongodb object
-            myclient.close() # Always close connections 
+                ram.append(x) #Appending all to a list as mydoc is a mongodb object
+            myclient.close()  # Always close connections 
+            post=[]
+            for cpuitem in cpu:
+                for ramitem in ram: #add as many loops as you need
+                    item={
+                        "cpu": cpuitem,
+                        "ram": ramitem,
+                        "totalprice":float(cpuitem["price"])+float(ramitem["price"]),
+                        "configurl":str(cpuitem["_id"])+"/"+str(ramitem["_id"])
+                    }
+                    post.append(item)
             #Posts contain the list of dictionary/json information to be displayed
             #This render template will be called after the form submission
-            return render_template('pro.html',title="Product List",ram=ram ,cpu=post)
+            return render_template('pro.html',title="Product List",posts=post)
     return render_template('index.html',title="Home", form=form) #Pass the form object on top if it is a GET request
+
+
+@app.route("/postconfig/<cpu>/<ram>", methods=['GET'])
+@login_required
+def post(ram, cpu):
+    myclient = pymongo.MongoClient("mongodb://localhost:27017")
+    mydb = myclient["mydatabase"]
+    mycol = mydb["cpu"]
+    myquery = {"_id": ObjectId(cpu)}
+    mycpu = mycol.find_one(myquery)
+    mycol = mydb["ram"]
+    myquery = {"_id": ObjectId(ram)}
+    myram = mycol.find_one(myquery)
+    post={"item": mycpu["name"]+" and "+myram["name"] ,
+   "price":float(mycpu["price"])+float(myram["price"]),
+   "userid":current_user.id,
+   }
+    print(post)
+    mycol = mydb["posts"]
+    x = mycol.insert_one(post)
+    flash('Config saved to your Dashboard.')
+    return redirect(url_for('index'))
 
 @app.route('/register',methods=['GET','POST'])
 def register():
@@ -159,20 +190,27 @@ def login():
                 return redirect(next_page) 
     return render_template('login.html',title='Sign In', form=form)
 
-@app.route('/user/<username>') # Passing parameters through url/route
+@app.route('/dashboard') # Passing parameters through url/route
 @login_required
-def user(username): #Parameter in url passed in function must have same var name
+def user(): #Parameter in url passed in function must have same var name
     user=User() 
     myclient = pymongo.MongoClient("mongodb://localhost:27017")
     mydb = myclient["mydatabase"]
     mycol = mydb["users"]
-    myquery = {"username":username}
+    myquery = {"_id": ObjectId(current_user.id)}
     mydoc = mycol.find(myquery)
     for item in mydoc:
         user.username = item["username"]
         user.id = item["_id"] # This is done so that in the template you can enable edit button if the user is seeing his profile
     myclient.close()
-    return render_template('user.html', user=user)
+    mycol = mydb["posts"]
+    myquery = {"userid": current_user.id}
+    mydoc = mycol.find(myquery)
+    posts=[]
+    for item in mydoc:
+        print(item)
+        posts.append(item)
+    return render_template('user.html', user=user,posts=posts)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
