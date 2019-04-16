@@ -31,6 +31,48 @@
     or use images from the internet by giving the url-->
         <img src={{ item.ram.imgurl}}>
         Priced at {{item.ram.Price}}
+
+        <p>GPU</p>
+        <a href={{ item.gpu.url }}>{{ item.gpu.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.gpu.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
+     inside app folder and the iuse the path from there. app/static/images/1.jpg
+    or use images from the internet by giving the url-->
+        <img src={{ item.gpu.imgurl}}>
+        Priced at {{item.gpu.Price}}
+
+        <p>Hard Disk</p>
+        <a href={{ item.hdd.url }}>{{ item.hdd.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.hdd.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
+     inside app folder and the iuse the path from there. app/static/images/1.jpg
+    or use images from the internet by giving the url-->
+        <img src={{ item.hdd.imgurl}}>
+        Priced at {{item.hdd.Price}}
+
+        <p>Power Supply</p>
+        <a href={{ item.powersupply.url }}>{{ item.powersupply.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.powersupply.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
+     inside app folder and the iuse the path from there. app/static/images/1.jpg
+    or use images from the internet by giving the url-->
+        <img src={{ item.powersupply.imgurl}}>
+        Priced at {{item.powersupply.Price}}
+
+
+        <p>Mother Board</p>
+        <a href={{ item.motherboard.url }}>{{ item.motherboard.name }}</a>
+        </br>
+        <p>Manufactured by {{ item.motherboard.manufacturer }}</p>
+        <!-- Keep the images static path in mongodb. Create a folder called as static
+     inside app folder and the iuse the path from there. app/static/images/1.jpg
+    or use images from the internet by giving the url-->
+        <img src={{ item.motherboard.imgurl}}>
+        Priced at {{item.motherboard.Price}}
+
         <p>Total Price will be {{ item.totalprice }}</p>
         <a href="{{ url_for('post',ram=item.ram._id,cpu=item.cpu._id) }}">Save to Dashboard</a>
     </li>

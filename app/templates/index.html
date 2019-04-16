@@ -26,13 +26,36 @@
         {{ form.cpu() }}
     </p>
     {% endif %}
-    {% if form.RamStorage %}
+    {% if form.ram %}
     <p>
-        {{ form.RamStorage.label }}<br>
-        {{ form.RamStorage() }}
+        {{ form.ram.label }}<br>
+        {{ form.ram() }}
     </p>
     {% endif %}
-
+    {% if form.gpu %}
+    <p>
+        {{ form.gpu.label }}<br>
+        {{ form.gpu() }}
+    </p>
+    {% endif %}
+    {% if form.hdd %}
+    <p>
+        {{ form.hdd.label }}<br>
+        {{ form.hdd() }}
+    </p>
+    {% endif %}
+    {% if form.motherboard %}
+    <p>
+        {{ form.motherboard.label }}<br>
+        {{ form.motherboard() }}
+    </p>
+    {% endif %}
+    {% if form.powersupply %}
+    <p>
+        {{ form.powersupply.label }}<br>
+        {{ form.powersupply() }}
+    </p>
+    {% endif %}
     <!--Submit button-->
     <p>{{ form.submit() }}</p>
 </form>

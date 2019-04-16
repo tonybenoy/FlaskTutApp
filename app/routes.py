@@ -9,6 +9,16 @@ from bson.objectid import ObjectId #TO search with id in mongo db we need bson o
 class User(UserMixin): #Defined user object  for session management. If using ORM then you should define all the object but not required as we are using Direct connections to mongo
     pass
 
+
+def choicesgenerator(items):
+    a = [("All","All")]
+    if items == None:
+        a.append("None Available", "None Available")
+    else:
+        for item in items:
+            a.append((item, item))
+    return a
+
 @login.user_loader # Used to load a user in login manager defined in __init__.py Define all user related items here as current logged in user object
 def load_user(id):
     user = User()
@@ -36,24 +46,35 @@ def index():
  
 @app.route('/search/<usertype>', methods=['GET', 'POST'])
 def search(usertype):
-    #myclient = pymongo.MongoClient("mongodb://localhost:27017")
-    #mydb = myclient["mydatabase"]
-    #mycol = mydb["users"]
-    #myquery = {"_id": ObjectId(current_user.id)}
-    #mydoc = mycol.find_one(myquery)
-    #usertype = mydoc["usertype"] #Current user's usertype can be used to create the type of form needed
-    #myclient.close()
-    if usertype== "n":
-        form = NoviceForm() #create and object of the form class
+    if usertype == "n":
+        myclient = pymongo.MongoClient("mongodb://localhost:27017")
+        mydb = myclient["mydatabase"]
+        mycol = mydb["novicedataset"]
+        form = NoviceForm(choicesgenerator(mycol.find({}).distinct("category"))) #create and object of the form class
+        myclient.close()
     elif usertype == "p":
-        form = ProForm()
+        myclient = pymongo.MongoClient("mongodb://localhost:27017")
+        mydb = myclient["mydatabase"]
+        mycol = mydb["ram"]
+        ramchoice = choicesgenerator(mycol.find({}).distinct("ram"))
+        mycol = mydb["cpu"]
+        cpuchoice = choicesgenerator(mycol.find({}).distinct("cpu"))
+        mycol = mydb["gpu"]
+        gpuchoice = choicesgenerator(mycol.find({}).distinct("GPU"))
+        mycol = mydb["motherboard"]
+        motherboardchoice = choicesgenerator(mycol.find({}).distinct("mb"))
+        mycol = mydb["hdd"]
+        hddchoice = choicesgenerator(mycol.find({}).distinct("hdd"))
+        mycol = mydb["powersupply"]
+        powersupplychoice = choicesgenerator(mycol.find({}).distinct("powersupply"))
+        form = ProForm(ramchoices=ramchoice, cpuchoices=cpuchoice, gpuchoices=gpuchoice, powersupplychoices=powersupplychoice, hddchoices=hddchoice, motherboardchoices=motherboardchoice)
     if form.validate_on_submit(): #when form is submitted then this block of code will be run i.e. on POST
         #Create a connection everytime and do not use global connections.
         if usertype== "n":
             myclient = pymongo.MongoClient("mongodb://localhost:27017")
             mydb = myclient["mydatabase"]
             mycol = mydb["novicedataset"]
-            if form.category.data== "all": # To do a global search on all categories
+            if form.category.data== "All": # To do a global search on all categories
                 myquery = {"Price":{"$lt":form.price.data}} #$lt for less than 
             else:
                 myquery = {"Price":{"$lt":form.price.data},"category":form.category.data}
@@ -68,38 +89,94 @@ def search(usertype):
         elif usertype == "p":
             myclient = pymongo.MongoClient("mongodb://localhost:27017")
             mydb = myclient["mydatabase"]
+            
             mycol = mydb["cpu"]
-            myquery = {"cpu":form.cpu.data} #$lt for less than 
+            if form.cpu.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"cpu":form.cpu.data} #$lt for less than 
             mydoc = mycol.find(myquery)
             cpu=[] #List that will be passed to the template to display
             for x in mydoc:
                 cpu.append(x) #Appending all to a list as mydoc is a mongodb object
+            
             mycol = mydb["ram"]
-            myquery = {"ram":form.RamStorage.data} #$lt for less than 
+            if form.ram.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"ram":form.ram.data} #$lt for less than 
             mydoc = mycol.find(myquery)
             ram=[] #List that will be passed to the template to display
             for x in mydoc:
                 ram.append(x) #Appending all to a list as mydoc is a mongodb object
+            
+            mycol = mydb["gpu"]
+            if form.gpu.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"GPU":form.ram.data} #$lt for less than 
+            mydoc = mycol.find(myquery)
+            gpu=[] #List that will be passed to the template to display
+            for x in mydoc:
+                gpu.append(x) #Appending all to a list as mydoc is a mongodb object
+            
+            mycol = mydb["hdd"]
+            if form.hdd.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"hdd":form.hdd.data} #$lt for less than 
+            mydoc = mycol.find(myquery)
+            hdd=[] #List that will be passed to the template to display
+            for x in mydoc:
+                hdd.append(x) #Appending all to a list as mydoc is a mongodb object
+            
+            mycol = mydb["motherboard"]
+            if form.motherboard.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"mb":form.hdd.data} #$lt for less than 
+            mydoc = mycol.find(myquery)
+            motherboard=[] #List that will be passed to the template to display
+            for x in mydoc:
+                motherboard.append(x) #Appending all to a list as mydoc is a mongodb object
+            
+            mycol = mydb["powersupply"]
+            if form.powersupply.data== "All":
+                myquery = {} 
+            else:
+                myquery = {"powersupply":form.hdd.data} #$lt for less than 
+            mydoc = mycol.find(myquery)
+            powersupply=[] #List that will be passed to the template to display
+            for x in mydoc:
+                powersupply.append(x) #Appending all to a list as mydoc is a mongodb object
+            
             myclient.close()  # Always close connections 
             post=[]
             for cpuitem in cpu:
-                for ramitem in ram: #add as many loops as you need
-                    item={
-                        "cpu": cpuitem,
-                        "ram": ramitem,
-                        "totalprice":float(cpuitem["price"])+float(ramitem["price"]),
-                        "configurl":str(cpuitem["_id"])+"/"+str(ramitem["_id"])
-                    }
-                    post.append(item)
+                for ramitem in ram:
+                    for hdditem in hdd:
+                        for gpuitem in gpu:
+                            for powersupplyitem in powersupply:
+                                for motherboarditem in motherboard:
+                                    item={
+                                        "cpu": cpuitem,
+                                        "ram": ramitem,
+                                        "hdd": hdditem,
+                                        "gpu": gpuitem,
+                                        "powersupply": powersupplyitem,
+                                        "motherboard":motherboarditem,
+                                        "totalprice":float(cpuitem["price"])+float(ramitem["price"])+float(gpuitem["price"])+float(powersupplyitem["price"])+float(hdditem["price"])+float(motherboarditem["price"])
+                                    }
+                                    post.append(item)
             #Posts contain the list of dictionary/json information to be displayed
             #This render template will be called after the form submission
             return render_template('pro.html',title="Product List",posts=post)
     return render_template('index.html',title="Home", form=form) #Pass the form object on top if it is a GET request
 
 
-@app.route("/postconfig/<cpu>/<ram>", methods=['GET'])
+@app.route("/postconfig/<cpu>/<ram>/<gpu>/<ps>/<hdd>/<mb>", methods=['GET'])
 @login_required
-def post(ram, cpu):
+def post(ram, cpu,gpu,mb,ps,hdd):
     myclient = pymongo.MongoClient("mongodb://localhost:27017")
     mydb = myclient["mydatabase"]
     mycol = mydb["cpu"]
@@ -108,14 +185,27 @@ def post(ram, cpu):
     mycol = mydb["ram"]
     myquery = {"_id": ObjectId(ram)}
     myram = mycol.find_one(myquery)
-    post={"item": mycpu["name"]+" and "+myram["name"] ,
-   "price":float(mycpu["price"])+float(myram["price"]),
+    mycol = mydb["gpu"]
+    myquery = {"_id": ObjectId(gpu)}
+    mygpu = mycol.find_one(myquery)
+    mycol = mydb["hdd"]
+    myquery = {"_id": ObjectId(hdd)}
+    myhdd = mycol.find_one(myquery)
+    mycol = mydb["powersupply"]
+    myquery = {"_id": ObjectId(ps)}
+    mypowersupply = mycol.find_one(myquery)
+    mycol = mydb["motherboard"]
+    myquery = {"_id": ObjectId(mb)}
+    mymotherboard = mycol.find_one(myquery)
+    
+    post={"item": mycpu["name"]+" and "+myram["name"]+" and "+mygpu["name"]+" and "+myhdd["name"]+" and "+mypowersupply["name"]+" and "+mymotherboard["name"] ,
+   "price":float(mycpu["price"])+float(myram["price"])+float(mygpu["price"])+float(myhdd["price"])+float(mypowersupply["price"])+float(mymotherboard["price"]),
    "userid":current_user.id,
    }
-    print(post)
     mycol = mydb["posts"]
     x = mycol.insert_one(post)
     flash('Config saved to your Dashboard.')
+    myclient.close()
     return redirect(url_for('index'))
 
 @app.route('/register',methods=['GET','POST'])
@@ -170,7 +260,6 @@ def login():
         mycol = mydb["users"]
         myquery = {"username":form.username.data}
         mydoc = mycol.find_one(myquery)
-        print(mydoc)
         myclient.close()
         if mydoc == None: #If no user found
             flash('Username not found! Do you want to register?')
@@ -208,7 +297,6 @@ def user(): #Parameter in url passed in function must have same var name
     mydoc = mycol.find(myquery)
     posts=[]
     for item in mydoc:
-        print(item)
         posts.append(item)
     return render_template('user.html', user=user,posts=posts)
 
