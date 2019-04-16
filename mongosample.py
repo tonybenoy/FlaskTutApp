@@ -58,6 +58,7 @@ mydict={
 }
 
 x = mycol.insert_one(mydict)
+
 mycol = mydb["ram"]
 mydict = {
     "ram" : "2",
@@ -99,3 +100,48 @@ mydict ={
     "price" : "1300"
 }
 x = mycol.insert_one(mydict)
+
+mycol = mydb["gpu"]
+mydict = {
+    "GPU" : "4 GB",
+    "name" : "AMD m2 4GB",
+    "manufacturer" : "AMD",
+    "url" : "www.google.com/gg",
+    "imgurl" : "www.google.com/ggi",
+    "price" : "2000"
+}
+
+x = mycol.insert_one(mydict)
+mycol = mydb["hdd"]
+mydict = {
+    "hdd" : "1 TB",
+    "name" : "Corsair TB",
+    "manufacturer" : "Corsair",
+    "url" : "www.google.com/gg",
+    "imgurl" : "www.google.com/ggi",
+    "price" : "1000"
+}
+x = mycol.insert_one(mydict)
+
+mycol = mydb["motherboard"]
+mydict = {
+    "mb" : "AM4 Socket Type",
+    "name" : "AM4 Socket Type sdkdn",
+    "manufacturer" : "AM4",
+    "url" : "www.google.com/nn",
+    "imgurl" : "www.google.com/nni",
+    "price" : "2000"
+}
+x = mycol.insert_one(mydict)
+
+mycol = mydb["powersupply"]
+mydict = {
+    "powersupply" : "4 Watt",
+    "name" : "Nvdia 4 WATT",
+    "manufacturer" : "Nvdia",
+    "url" : "www.google.com/gg",
+    "imgurl" : "www.google.com/ggi",
+    "price" : "3000"
+}
+x = mycol.insert_one(mydict)
+
