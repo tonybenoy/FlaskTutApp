@@ -173,6 +173,23 @@ def search(usertype):
             return render_template('pro.html',title="Product List",posts=post)
     return render_template('index.html',title="Home", form=form) #Pass the form object on top if it is a GET request
 
+@app.route("/postconf/<lap>", methods=['GET'])
+@login_required
+def postl(lap):
+    myclient = pymongo.MongoClient("mongodb://localhost:27017")
+    mydb = myclient["mydatabase"]
+    mycol = mydb["novicedataset"]
+    myquery = {"_id": ObjectId(lap)}
+    mylaptop = mycol.find_one(myquery)
+    post={"item": mylaptop["name"],
+   "price":float(mylaptop["Price"]),
+   "userid":current_user.id,
+   }
+    mycol = mydb["posts"]
+    x = mycol.insert_one(post)
+    flash('Laptop saved to your Dashboard.')
+    myclient.close()
+    return redirect(url_for('index'))
 
 @app.route("/postconfig/<cpu>/<ram>/<gpu>/<ps>/<hdd>/<mb>", methods=['GET'])
 @login_required

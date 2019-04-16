@@ -1,20 +1,25 @@
 <!--Inherit from the base template-->
-{% extends "base.html" %} 
+{% extends "base.html" %}
 
 {% block content %}
 <!--All the content from here will be embedded inside base.html  block-->
-    <h1>Hi!</h1>
-      {% for post in posts %} <!--Looping through all the items in the post list passed-->
+<h1>Hi!</h1>
+{% for post in posts %}
+<!--Looping through all the items in the post list passed-->
 <p>
-    The {{post.category}} laptops for you are <!--Jinja template to access items in dictionary/JSOn -->
+    The {{post.category}} laptops for you are
+    <!--Jinja template to access items in dictionary/JSOn -->
     </br>
     <a href={{ post.url }}>{{ post.name }}</a>
     </br>
     <!-- Keep the images static path in mongodb. Create a folder called as static
      inside app folder and the iuse the path from there. app/static/images/1.jpg
     or use images from the internet by giving the url-->
-    <img src={{ post.imgurl}}> 
+    <img src={{ post.imgurl}}>
     Priced at {{post.Price}}
+    <a href="{{ url_for('postl',lap=post._id) }}">Save to Dashboard</a>
 </p>
-        {% endfor %} <!--Always close for loops like this-->
-{% endblock %}<!--End of block content-->
+{% endfor %}
+<!--Always close for loops like this-->
+{% endblock %}
+<!--End of block content-->
