@@ -151,23 +151,49 @@ def search(usertype):
                 powersupply.append(x) #Appending all to a list as mydoc is a mongodb object
             
             myclient.close()  # Always close connections 
-            post=[]
+            post = []
             for cpuitem in cpu:
                 for ramitem in ram:
                     for hdditem in hdd:
                         for gpuitem in gpu:
                             for powersupplyitem in powersupply:
                                 for motherboarditem in motherboard:
-                                    item={
+                                    item = {
                                         "cpu": cpuitem,
                                         "ram": ramitem,
                                         "hdd": hdditem,
                                         "gpu": gpuitem,
+                                        "type":"config",
                                         "powersupply": powersupplyitem,
                                         "motherboard":motherboarditem,
                                         "totalprice":float(cpuitem["price"])+float(ramitem["price"])+float(gpuitem["price"])+float(powersupplyitem["price"])+float(hdditem["price"])+float(motherboarditem["price"])
                                     }
                                     post.append(item)
+            mycol = mydb["novicedataset"]
+            myquery={}
+            if form.cpu.data!= "All":
+                myquery["cpu"] = form.cpu.data
+            if form.ram.data!= "All":
+                myquery["ram"] = form.ram.data
+            if form.gpu.data!= "All":
+                myquery["gpu"] = form.gpu.data
+            if form.hdd.data!= "All":
+                myquery["hdd"] = form.hdd.data
+            mydoc = mycol.find(myquery)
+            mylaptop=[] #List that will be passed to the template to display
+            for x in mydoc:
+                print(x)
+                item = {"name" : x["name"],
+                "cpu":x["cpu"],
+                "ram": x["ram"],
+                "gpu": x["gpu"],
+                "hdd": x["hdd"],
+                "type":"laptop",
+                "totalprice": x["Price"],
+                "id":x["_id"]
+                }
+                post.append(item)
+            myclient.close()  # Always close connections 
             #Posts contain the list of dictionary/json information to be displayed
             #This render template will be called after the form submission
             return render_template('pro.html',title="Product List",posts=post)

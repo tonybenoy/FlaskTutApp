@@ -13,6 +13,7 @@
 <ul>
     <!--Jinja template to access items in dictionary/JSOn -->
     <li>
+        {% if item.type == "config" %}
         <p>CPU</p>
         <a href={{ item.url }}>{{ item.cpu.name }}</a>
         </br>
@@ -74,7 +75,20 @@
         Priced at {{item.motherboard.Price}}
 
         <p>Total Price will be {{ item.totalprice }}</p>
-        <a href="{{ url_for('post',ram=item.ram._id,cpu=item.cpu._id) }}">Save to Dashboard</a>
+        <a
+            href="{{ url_for('post',ram=item.ram._id,gpu=item.gpu._id,cpu=item.cpu._id,ps=item.powersupply._id,hdd=item.hdd._id,mb=item.motherboard._id) }}">Save
+            to Dashboard</a>
+        {% endif %}
+        {% if item.type == "laptop" %}
+        <p>Laptop</p>
+        <p>{{ item.name }}</p>
+        <p>CPU :{{item.cpu}}</p>
+        <p>RAM :{{item.ram}}</p>
+        <p>GPU :{{item.gpu}}</p>
+        <p>Hard Disk :{{item.hdd}}</p>
+        <p>Price :{{item.totalprice}}</p>
+        <a href="{{ url_for('postl',lap=item.id) }}">Save to Dashboard</a>
+        {% endif %}
     </li>
 </ul> {% endfor %}
 <!--Always close for loops like this-->

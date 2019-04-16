@@ -5,15 +5,18 @@ mydb = myclient["mydatabase"]
 mycol = mydb["novicedataset"]
 
 #make sure the names matches everywhere and it is case sensitive
-mydict = { "name": "Dell XPS 13", "Price": 3000,
-        "url":"https://amzon.in/kjdksd","category":"gaming","imgurl":"image url" }
-x = mycol.insert_one(mydict)
-
-mydict = { "name": "Dell XPS 15", "Price": 2000,
-        "url":"https://amzon.in/kjddsd","category":"office","imgurl":"image url2" }
-x = mycol.insert_one(mydict)
-mydict = { "name": "hp XPS 16", "Price": 1000,
-        "url":"https://amzon.in/kjddsd","category":"internet","imgurl":"image url2" }
+mydict = {
+    "name" : "Dell XPS 13",
+    "Price" : 3000,
+    "url" : "https://amzon.in/kjdksd",
+    "category" : "gaming",
+    "manufacturer" : "Dell",
+    "imgurl" : "image url",
+    "ram" : "4 GB",
+    "cpu" : "i5",
+    "hdd" : "1TB",
+    "gpu" : "2 GB"
+}
 x = mycol.insert_one(mydict)
 
 
